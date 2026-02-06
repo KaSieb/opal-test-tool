@@ -1,28 +1,40 @@
-// /api/opal-test-tool.js
+// Proxy-Handler für Opal Chat
 export default async function handler(req, res) {
-  const fullUrl = "https://opal-test-tool-7wj4.vercel.app/api/opal-test-tool"; // Absolute URL für Opal
+  const vercelEndpoint = "https://opal-test-tool-7wj4.vercel.app/api/opal-test-tool";
 
   if (req.method === "POST") {
-    // Tool-Ausführung
+    // Eingabe vom Chat
     const { input } = req.body;
 
     if (!input) {
       return res.status(400).json({ error: "Parameter 'input' fehlt." });
     }
 
-    // Beispiel: einfache Verarbeitung
-    const output = `Du hast eingegeben: ${input}`;
+    try {
+      // Anfrage an Vercel-Endpoint weiterleiten
+      const response = await fetch(vercelEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ input })
+      });
 
-    return res.status(200).json({ output });
+      const data = await response.json();
+
+      // Antwort direkt an Opal Chat zurückgeben
+      return res.status(200).json(data);
+    } catch (error) {
+      return res.status(500).json({ error: "Fehler beim Proxy-Request an Vercel." });
+    }
+
   } else {
     // Discovery Manifest für Opal
     res.status(200).json({
       functions: [
         {
-          name: "opal_test_tool",                 // Name in Opal
-          description: "Mein Test Tool für Opal", // Beschreibung
-          http_method: "POST",                    // HTTP-Methode
-          endpoint: fullUrl,                       // Absolute URL für Chat-Aufruf
+          name: "opal_test_tool",
+          description: "Mein Test Tool für Opal (via Proxy)",
+          http_method: "POST",
+          endpoint: "/tools/proxy", // Interner Opal-Endpoint
           parameters: [
             {
               name: "input",
