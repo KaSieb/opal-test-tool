@@ -1,7 +1,3 @@
-import json
-
-def handler(request, response):
-    response.status_code = 200
-    response.set_header("Content-Type", "application/json")
-    response.send(json.dumps({"message": "Hallo Opal"}))
-
+export default function handler(req, res) {
+  res.status(200).json({ message: "Hallo Opal" });
+}
