@@ -1,7 +1,7 @@
 import json
 
-def handler(request):
-    return {
-        "statusCode": 200,
-        "body": json.dumps({"message": "Hallo Opal"})
-    }
+def handler(request, response):
+    response.status_code = 200
+    response.set_header("Content-Type", "application/json")
+    response.send(json.dumps({"message": "Hallo Opal"}))
+
