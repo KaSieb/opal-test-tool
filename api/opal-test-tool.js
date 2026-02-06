@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     }
 
     try {
-      // Weiterleitung an Vercel
+      // Anfrage an Vercel weiterleiten
       const response = await fetch(vercelEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -20,7 +20,7 @@ export default async function handler(req, res) {
 
       const data = await response.json();
 
-      // Ergebnis an Opal zurückgeben
+      // Antwort zurück an Opal Chat
       return res.status(200).json(data);
     } catch (error) {
       return res.status(500).json({ error: "Fehler beim Proxy-Request an Vercel." });
